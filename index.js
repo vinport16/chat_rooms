@@ -6,7 +6,7 @@ var io = sio(http);
 
 
 // there MUST be a 'Lobby', it is where all incoming users are directed
-var rooms = {'Lobby':{'users':[],'log':[]}, 'joj':{'users':[],'log':[]}, 'Yolander':{'users':[],'log':[]}, 'Snans':{'users':[],'log':[]}};
+var rooms = {'Lobby':{'users':[],'log':[]}, 'Lounge':{'users':[],'log':[]}, 'Dining Room':{'users':[],'log':[]}, 'Ballroom':{'users':[],'log':[]}};
 
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
@@ -54,8 +54,8 @@ io.on('connection', function(socket){
     username = name;
 
     // serve old messages
+    console.log('sending old messages');
     for(var i=0; i < rooms[current_room].log.length; i++){
-      //console.log(rooms[current_room].log[i].type);
       socc.emit(rooms[current_room].log[i].type, rooms[current_room].log[i]);
     }
 
@@ -66,7 +66,7 @@ io.on('connection', function(socket){
 
   	socket.on('disconnect', function(){
       rooms[current_room].users.splice(rooms[current_room].users.indexOf(socc), 1);
-      push_to_room(current_room, {type:'user event', to:current_room, val:username+' left room'});
+      push_to_room(current_room, {type:'user event', to:current_room, val:username+' logged off'});
   	});
   });
 

@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+<head>
+  <title>Chat</title>
+  <style>
+    .messages {
+      list-style-type:none;
+      padding-left: 5px;
+      width:50vw;
+    }
+    .name {
+      background:#F0F0F0;
+      font-size:10pt;
+      color:grey;
+    }
+    .mess {
+      background:#FFFFFF;
+      font-size:16pt;
+      color:black;
+    }
+    .user_event {
+      background:#111111;
+      font-size:10pt;
+      color:red;
+    }
+    .room {
+      border:solid;
+      border-color:blue;
+      border-radius:8px;
+      font-size:20pt;
+    }
+  </style>
+</head>
+
+<script> var name = prompt("Please enter your name", "User1"); </script>
+
+<body>
+  
+  <ul id="messages" class="messages">
+    
+  </ul>
+  <form action="">
+    <input class="mess" id="m" autocomplete="off" style="width:50vw;" />
+  </form>
+
+  <div style="position:relative; float:right; width:40vw;">
+    <div id="rooms" style="position:absolute; bottom:0;">
+      <input type='button' class='room' value='Lobby' onclick="switch_room('Lobby')" />
+      <input type='button' class='room' value='test_room_1' onclick="switch_room('test_room_1')" />
+      
+    </div>
+  </div>
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+
+  var socket = io();
+
+  var local_log = [];
+
+  var current_room = 'Lobby';
+
+  var all_rooms = [];
+
+  socket.emit('join room', name);
+
+  function switch_room(newRoom){
+    local_log = [];
+    $('#messages').html('');
+    socket.emit('switch room', newRoom);
+    current_room = newRoom;
+    update_rooms();
+  }
+
+
+  $('form').submit(function(){
+    socket.emit('chat message', {name: name, to:current_room, val: $('#m').val(), type:'chat message'} );
+    $('#m').val('');
+    return false;
+  });
+
+  socket.on('chat message', function(msg){
+    local_log.push({type:'chat message' , val:msg});
+    var messages = $('#messages').html();
+    var newMess = "<li>";
+    if(local_log.length > 0 && local_log[local_log.length-1].type == 'chat message' && local_log[local_log.length-2].val.name == msg.name){
+      
+    } else {
+      newMess = newMess+"<div class='name'>"+msg.name+"</div>";
+    }
+    newMess = newMess+"<div class='mess'>"+msg.val+"</div></li>";
+
+    $('#messages').html(messages+newMess);
+    window.scrollTo(0,document.body.scrollHeight);
+  });
+
+  socket.on('user event', function(msg){
+    local_log.push({type:'user event' , val:msg});
+    var messages = $('#messages').html();
+    var newMess = "<li><div class='user_event'>"+msg.val+"</div></li>";
+    $('#messages').html(messages+newMess);
+  });
+
+  socket.on('update rooms', function(rooms){
+    all_rooms = rooms;
+    update_rooms();
+  });
+
+  function update_rooms(){
+    var rooms_to_display = [];
+    for(var i=0; i < all_rooms.length; i++){
+      if(all_rooms[i] != current_room){
+        rooms_to_display.push(all_rooms[i]);
+      }
+    }
+
+    formatted_rooms = '';
+    for(var i=0; i < rooms_to_display.length; i++){
+      formatted_rooms = formatted_rooms + "<input type='button' class='room' value='"+rooms_to_display[i]+"' onclick=\"switch_room('"+rooms_to_display[i]+"')\" />";
+    }
+    $('#rooms').html(formatted_rooms);
+  }
+  
+</script>
+
+</html>

@@ -1,10 +1,11 @@
 var app = require('express')();
 //var redis = require('redis');
-var http = require('http').Server(app);
+var http = require('http').createServer(app);
 var sio = require('socket.io');
 var io = sio(http);
 
 var port = process.env.PORT || 8080;
+http.listen(port);
 
 // there MUST be a 'Lobby', it is where all incoming users are directed
 var rooms = {'Lobby':{'users':[],'log':[]}, 'Lounge':{'users':[],'log':[]}, 'Dining Room':{'users':[],'log':[]}, 'Ballroom':{'users':[],'log':[]}};
@@ -93,4 +94,3 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(port);

@@ -29,6 +29,13 @@
       border-radius:8px;
       font-size:20pt;
     }
+    .room_setting {
+      float:right;
+      border:solid;
+      border-color:red;
+      border-radius:8px;
+      font-size:20pt;
+    }
   </style>
 </head>
 
@@ -42,13 +49,21 @@
   <form action="">
     <input class="mess" id="m" autocomplete="off" style="width:50vw;" />
   </form>
+  
+  <div id="roomSettings" style="margin-left:0; position:absolute; width:95vw; float:right; margin-top:5px;">
+      <input type='button' class='room_setting' value='add room' onclick="addRoom()" />
+      <input type='button' class='room_setting' value='delete room' onclick="deleteRoom()" />
+  </div>
 
   <div style="position:relative; float:right; width:40vw;">
-    <div id="rooms" style="position:absolute; bottom:0;">
+    <div style="position:absolute; bottom:0;">
+      <div id="rooms" style="position:relative;">
       <input type='button' class='room' value='Lobby' onclick="switch_room('Lobby')" />
       <input type='button' class='room' value='test_room_1' onclick="switch_room('test_room_1')" />
+      </div>
       
     </div>
+    
   </div>
 
 </body>
@@ -122,6 +137,18 @@
       formatted_rooms = formatted_rooms + "<input type='button' class='room' value='"+rooms_to_display[i]+"' onclick=\"switch_room('"+rooms_to_display[i]+"')\" />";
     }
     $('#rooms').html(formatted_rooms);
+  }
+
+  function addRoom(){
+    socket.emit('new room', prompt("New room name", ""));
+  }
+
+  function deleteRoom(){
+    
+  }
+
+  function cancelDeleteRoom(){
+    update_rooms();
   }
   
 </script>

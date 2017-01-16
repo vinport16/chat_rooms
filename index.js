@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var sio = require('socket.io');
 var io = sio(http);
 
+var port = process.env.PORT || 8080;
 
 // there MUST be a 'Lobby', it is where all incoming users are directed
 var rooms = {'Lobby':{'users':[],'log':[]}, 'Lounge':{'users':[],'log':[]}, 'Dining Room':{'users':[],'log':[]}, 'Ballroom':{'users':[],'log':[]}};
@@ -92,4 +93,4 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(3000, "0.0.0.0");
+http.listen(port);

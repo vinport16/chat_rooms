@@ -10,10 +10,9 @@ http.listen(port);
 // there MUST be a 'Lobby', it is where all incoming users are directed
 var rooms = {'Lobby':{'users':[],'log':[]}, 'Lounge':{'users':[],'log':[]}, 'Dining Room':{'users':[],'log':[]}, 'Ballroom':{'users':[],'log':[]}};
 
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
+app.get('/', function(req, res){ //when someone connects initially, send the index
+  res.sendFile(__dirname + '/index.html');
 });
-
 
 function push_to_room(room, msg){
   rooms[room].log.push(msg);
